@@ -1,12 +1,27 @@
 package com.example.tarefasfamilia;
 
+import androidx.annotation.NonNull;
+
 public class TarefaModel {
     private int id;
     private String descricao, responsavel;
 
-    private boolean status;
+    private int status;
 
-    public TarefaModel(String descricao, String responsavel, Boolean status){
+    @NonNull
+    @Override
+    public String toString() {
+        String estadoTarefa = "";
+        if(this.status == 1){
+            estadoTarefa = "Concluido";
+        }else{
+            estadoTarefa = "Pendente";
+        }
+        return this.descricao + " | " + estadoTarefa + " | " +this.responsavel;
+    }
+
+
+    public TarefaModel(String descricao, String responsavel, int status){
         this.descricao = descricao;
         this.responsavel = responsavel;
         this.status = status;
@@ -40,11 +55,12 @@ public class TarefaModel {
         this.responsavel = responsavel;
     }
 
-    public boolean isStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(int status) {
         this.status = status;
     }
+
 }
