@@ -30,17 +30,47 @@ public class MainActivity extends AppCompatActivity {
 
         associa();
 
+        ArrayList arrayListView = new ArrayList();
+        arrayListView.add("Responsável");
+        arrayListView.add("João");
+        arrayListView.add("Lucas");
+        arrayListView.add("Clara");
+        arrayListView.add("Joana");
+
+        ArrayAdapter adapter = new ArrayAdapter(MainActivity.this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, arrayListView);
+
+        spinnerResponsavel.setAdapter(adapter);
+
         TarefaDAO tarefaDAO = new TarefaDAO(MainActivity.this);
 
-        //pegar as informação do BD
-        arrayListTarefa = tarefaDAO.consultarTodos();
+        radioTodos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String responsavel = spinnerResponsavel.getSelectedItem().toString();
+                arrayListTarefa = tarefaDAO.consultar("todos", responsavel);
+                atualizaListView();
+            }
+        });
 
-        //passa as informações pro adapter
-        ArrayAdapter adapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, arrayListTarefa);
+        radioPendente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String responsavel = spinnerResponsavel.getSelectedItem().toString();
+                arrayListTarefa = tarefaDAO.consultar("pendente", responsavel);
+                atualizaListView();
+            }
+        });
 
-        //atualiza listView
-        listViewTarefas.setAdapter(adapter);
+        radioRealizados.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String responsavel = spinnerResponsavel.getSelectedItem().toString();
+                arrayListTarefa = tarefaDAO.consultar("concluido", responsavel);
+                atualizaListView();
+            }
+        });
 
+        //vai para tela de nova tarefa
         buttonNovaTarefa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void atualizaListView() {
+        ArrayAdapter adapter = new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, arrayListTarefa);
+        //atualiza listView
+        listViewTarefas.setAdapter(adapter);
     }
 
     private void associa() {

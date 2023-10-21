@@ -48,8 +48,30 @@ public class TarefaDAO extends SQLiteOpenHelper {
         return nLinhas;
     };
 
-    public ArrayList<TarefaModel> consultarTodos(){
-        String comando = "SELECT * FROM " + TABELA;
+    public ArrayList<TarefaModel> consultar(String tipo, String responsavel){
+        String comando = "";
+
+        switch (tipo){
+            case "todos":
+                if(responsavel == "Responsável")
+                    comando = "SELECT * FROM " + TABELA;
+                else
+                    comando = "SELECT * FROM " + TABELA + " WHERE RESPONSAVEL = '" + responsavel + "'";
+                break;
+
+            case "pendente":
+                if(responsavel == "Responsável")
+                    comando = "SELECT * FROM " + TABELA + " WHERE STATUS = 0";
+                else
+                    comando = "SELECT * FROM " + TABELA + " WHERE STATUS = 0 AND RESPONSAVEL = '" + responsavel + "'";
+                break;
+            case "concluido":
+                if(responsavel == "Responsável")
+                    comando = "SELECT * FROM " + TABELA + " WHERE STATUS = 1";
+                else
+                    comando = "SELECT * FROM " + TABELA + " WHERE STATUS = 1 AND RESPONSAVEL = '" + responsavel + "'";
+                break;
+        }
 
         //procura no BD e retornar "Cursor"
         Cursor cursor = getReadableDatabase().rawQuery(comando, null);
