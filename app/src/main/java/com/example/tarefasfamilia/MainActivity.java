@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,10 @@ public class MainActivity extends AppCompatActivity {
     ListView listViewTarefas;
 
     ArrayList<TarefaModel> arrayListTarefa = new ArrayList<>();
+
+
+    TarefaModel tarefa;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +48,34 @@ public class MainActivity extends AppCompatActivity {
         spinnerResponsavel.setAdapter(adapter);
 
         TarefaDAO tarefaDAO = new TarefaDAO(MainActivity.this);
+
+        listViewTarefas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int posicao, long id) {
+                tarefa = arrayListTarefa.get(posicao);
+                long nLinhasAfetadas = tarefaDAO.inverteEstado(tarefa);
+
+                if(nLinhasAfetadas > 0){
+                    consulta(tarefaDAO);
+                    Toast.makeText(MainActivity.this, "Tarefa alterada com sucesso!", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MainActivity.this, "Vixi, algo deu errado :(", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+
+        spinnerResponsavel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                consulta(tarefaDAO);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                return;
+            }
+        });
 
         radioTodos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +112,19 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void consulta(TarefaDAO tarefaDAO) {
+        String responsavel = spinnerResponsavel.getSelectedItem().toString();
+        ;
+        if(radioPendente.isChecked())
+            arrayListTarefa = tarefaDAO.consultar("pendente", responsavel);
+        else if(radioRealizados.isChecked())
+            arrayListTarefa = tarefaDAO.consultar("concluido", responsavel);
+        else{
+            arrayListTarefa = tarefaDAO.consultar("todos", responsavel);
+        }
+        atualizaListView();
     }
 
     private void atualizaListView() {

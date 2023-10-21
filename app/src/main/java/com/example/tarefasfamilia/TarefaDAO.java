@@ -34,6 +34,20 @@ public class TarefaDAO extends SQLiteOpenHelper {
 
     }
 
+    public long inverteEstado(TarefaModel tarefa){
+        ContentValues values = new ContentValues();
+        values.put("DESCRICAO", tarefa.getDescricao());
+        values.put("RESPONSAVEL", tarefa.getResponsavel());
+        if(tarefa.getStatus() == 0)
+            values.put("STATUS", 1);
+        else
+            values.put("STATUS", 0);
+
+        String id = "id=?";
+        String[] args = {tarefa.getId()+""};
+        return getWritableDatabase().update(TABELA, values, id, args);
+    };
+
     //MÉTODO DE INSERIR
     public long inserir(TarefaModel tarefa){
         //associa coluna da tabela com os valores do Dto
