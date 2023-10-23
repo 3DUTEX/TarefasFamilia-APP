@@ -1,7 +1,9 @@
 package com.example.tarefasfamilia;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -52,15 +54,26 @@ public class MainActivity extends AppCompatActivity {
         listViewTarefas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int posicao, long id) {
-                tarefa = arrayListTarefa.get(posicao);
-                long nLinhasAfetadas = tarefaDAO.inverteEstado(tarefa);
+                AlertDialog.Builder msg = new AlertDialog.Builder(MainActivity.this);
+                msg.setMessage("Deseja inverter o estado da tarefa?");
+                msg.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        tarefa = arrayListTarefa.get(posicao);
+                        long nLinhasAfetadas = tarefaDAO.inverteEstado(tarefa);
 
-                if(nLinhasAfetadas > 0){
-                    consulta(tarefaDAO);
-                    Toast.makeText(MainActivity.this, "Tarefa alterada com sucesso!", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(MainActivity.this, "Vixi, algo deu errado :(", Toast.LENGTH_SHORT).show();
-                }
+                        if(nLinhasAfetadas > 0){
+                            consulta(tarefaDAO);
+                            Toast.makeText(MainActivity.this, "Tarefa alterada com sucesso!", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(MainActivity.this, "Vixi, algo deu errado :(", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                msg.setNegativeButton("Não", null);
+                msg.show();
+
                 return false;
             }
         });
