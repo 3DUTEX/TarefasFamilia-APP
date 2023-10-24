@@ -28,6 +28,8 @@ public class InserirTarefa extends AppCompatActivity {
 
         associa();
 
+
+
         ArrayList arrayListView = new ArrayList();
         arrayListView.add("Responsável");
         arrayListView.add("João");
@@ -44,6 +46,15 @@ public class InserirTarefa extends AppCompatActivity {
             public void onClick(View v) {
                 String desc = editTextDesc.getText().toString();
                 String responsavel = spinnerResponsavel.getSelectedItem().toString();
+
+                if(desc.isEmpty()){
+                    Toast.makeText(InserirTarefa.this, "O campo descrição não pode estar vazio", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(responsavel == "Responsável"){
+                    Toast.makeText(InserirTarefa.this, "O responsável não foi selecionado", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 TarefaModel tarefa = new TarefaModel(desc, responsavel, 0);
 
